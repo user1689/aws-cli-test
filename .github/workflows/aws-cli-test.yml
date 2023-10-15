@@ -25,5 +25,5 @@ jobs:
           echo "ami_id=$ami_id" >> $GITHUB_ENV
 
       - name: Share AMI with demo account
-        run: aws ec2 modify-image-attribute --image-id $ami_id --launch-permission "Add=[{UserId=$vars.DEMOACCOUNTID}]"
+        run: aws ec2 modify-image-attribute --image-id $ami_id --launch-permission "Add=[{UserId=${{ vars.DEMOACCOUNTID}}}]"
 
