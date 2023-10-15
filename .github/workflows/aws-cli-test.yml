@@ -1,0 +1,29 @@
+name: Get the latest ami id
+
+on:
+  pull_request:
+    types:
+      - closed
+jobs:
+  packer-build:
+    name: build ami
+    if: $${{ github.event.pull_request.merged }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_AMI_BUILDER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_AMI_BUILDER_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      
+      - name: Get the latest AMI ID
+        run: | 
+          ami_id=$(aws ec2 describe-images --owners self --query 'reverse(sort_by(Images, &CreationDate))[:1].ImageId' --output text)"
+          echo "the lastest AMI ID: $ami_id"
+          echo "ami_id=$ami_id" >> $GITHUB_ENV
+
+      - name: Share AMI with demo account
+        run: aws ec2 modify-image-attribute --image-id $ami_id --launch-permission "Add=[{UserId=$vars.DEMOACCOUNTID}]"
+
