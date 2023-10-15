@@ -20,7 +20,7 @@ jobs:
       
       - name: Get the latest AMI ID
         run: | 
-          ami_id=$(aws ec2 describe-images --owners self --query 'reverse(sort_by(Images, &CreationDate))[:1].ImageId' --output text)"
+          ami_id=$(aws ec2 describe-images --owners self --query 'reverse(sort_by(Images, &CreationDate))[:1].ImageId' --output text)
           echo "the lastest AMI ID: $ami_id"
           echo "ami_id=$ami_id" >> $GITHUB_ENV
 
